@@ -744,7 +744,7 @@ bool MediaCodecVideoDecoder::DeliverPendingOutputs(
 
       // Create VideoFrameBuffer with native texture handle.
       frame_buffer = surface_texture_helper_->CreateTextureFrame(
-          width, height, NativeHandleImpl(jni, texture_id, j_transform_matrix));
+          width, height, NativeHandleImpl(jni, texture_id, j_transform_matrix, false));
     } else {
       EnableFrameLogOnWarning();
     }

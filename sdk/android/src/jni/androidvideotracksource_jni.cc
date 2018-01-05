@@ -65,12 +65,13 @@ JNI_FUNCTION_DECLARATION(
     jint j_oes_texture_id,
     jfloatArray j_transform_matrix,
     jint j_rotation,
-    jlong j_timestamp) {
+    jlong j_timestamp,
+    jboolean j_rgbTexture) {
   AndroidVideoTrackSource* source =
       AndroidVideoTrackSourceFromJavaProxy(j_source);
   source->OnTextureFrameCaptured(
       j_width, j_height, jintToVideoRotation(j_rotation), j_timestamp,
-      NativeHandleImpl(jni, j_oes_texture_id, j_transform_matrix));
+      NativeHandleImpl(jni, j_oes_texture_id, j_transform_matrix, j_rgbTexture));
 }
 
 JNI_FUNCTION_DECLARATION(void,

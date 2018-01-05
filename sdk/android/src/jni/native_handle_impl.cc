@@ -237,14 +237,14 @@ void Matrix::Crop(float xFraction,
 // Aligning pointer to 64 bytes for improved performance, e.g. use SIMD.
 static const int kBufferAlignment = 64;
 
-NativeHandleImpl::NativeHandleImpl(int id, const Matrix& matrix)
-    : oes_texture_id(id), sampling_matrix(matrix) {}
+NativeHandleImpl::NativeHandleImpl(int id, const Matrix& matrix, const bool isRgb)
+    : oes_texture_id(id), sampling_matrix(matrix), rgbTexture(isRgb) {}
 
 NativeHandleImpl::NativeHandleImpl(JNIEnv* jni,
                                    jint j_oes_texture_id,
-                                   jfloatArray j_transform_matrix)
+                                   jfloatArray j_transform_matrix,jboolean j_rgbTexture)
     : oes_texture_id(j_oes_texture_id),
-      sampling_matrix(jni, j_transform_matrix) {}
+      sampling_matrix(jni, j_transform_matrix), rgbTexture(j_rgbTexture) {}
 
 AndroidTextureBuffer::AndroidTextureBuffer(
     int width,
@@ -277,6 +277,22 @@ int AndroidTextureBuffer::width() const {
 int AndroidTextureBuffer::height() const {
   return height_;
 }
+
+    jobject AndroidTextureBuffer::createJavaTextureBuffer(JNIEnv* jni){
+
+        jmethodID createTextureBuffer_mid = GetMethodID(
+                jni,
+                GetObjectClass(jni, surface_texture_helper_),
+                "createTextureBuffer",
+                "(III[FZ)Lorg/webrtc/TextureBufferImpl;");
+
+      jfloatArray sampling_matrix = native_handle_.sampling_matrix.ToJava(jni);
+      jobject javaTextureBuffer = jni->CallObjectMethod(surface_texture_helper_,
+                          createTextureBuffer_mid,
+                          native_handle_.oes_texture_id, width(), height(), sampling_matrix,
+                          native_handle_.rgbTexture);
+      return javaTextureBuffer;
+    }
 
 rtc::scoped_refptr<I420BufferInterface> AndroidTextureBuffer::ToI420() {
   int uv_width = (width() + 7) / 8;
@@ -500,6 +516,17 @@ jobject JavaVideoFrameFactory::ToJavaFrame(JNIEnv* jni,
         static_cast<AndroidVideoBuffer*>(android_buffer);
     j_buffer = android_video_buffer->video_frame_buffer();
   } else {
+      if (buffer->type() == VideoFrameBuffer::Type::kNative){
+          AndroidVideoFrameBuffer* android_buffer = static_cast<AndroidVideoFrameBuffer*>(buffer.get());
+          if(android_buffer->android_type() == AndroidVideoFrameBuffer::AndroidType::kTextureBuffer) {
+              AndroidTextureBuffer* texture_buffer = static_cast<AndroidTextureBuffer*>(buffer.get());
+              jobject javaTextureBuffer = texture_buffer->createJavaTextureBuffer(jni);
+              return jni->NewObject(
+                      *j_video_frame_class_, j_video_frame_constructor_id_, javaTextureBuffer,
+                      static_cast<jint>(frame.rotation()),
+                      static_cast<jlong>(frame.timestamp_us() * rtc::kNumNanosecsPerMicrosec));
+          }
+      }
     j_buffer = WrapI420Buffer(jni, buffer->ToI420());
   }
   return jni->NewObject(

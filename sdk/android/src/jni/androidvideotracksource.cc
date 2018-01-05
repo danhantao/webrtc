@@ -155,7 +155,7 @@ void AndroidVideoTrackSource::OnTextureFrameCaptured(
 
   OnFrame(VideoFrame(surface_texture_helper_->CreateTextureFrame(
                          adapted_width, adapted_height,
-                         NativeHandleImpl(handle.oes_texture_id, matrix)),
+                         NativeHandleImpl(handle.oes_texture_id, matrix,handle.rgbTexture)),
                      rotation, translated_camera_time_us));
 }
 
