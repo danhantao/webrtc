@@ -369,7 +369,7 @@ MediaCodecVideoEncoder::MediaCodecVideoEncoder(JNIEnv* jni,
       jni, *j_media_codec_video_encoder_class_, "encodeBuffer", "(ZIIJ)Z");
   j_encode_texture_method_ = GetMethodID(
         jni, *j_media_codec_video_encoder_class_, "encodeTexture",
-        "(ZI[FJ)Z");
+        "(ZI[FJZ)Z");
   j_encode_frame_method_ =
       GetMethodID(jni, *j_media_codec_video_encoder_class_, "encodeFrame",
                   "(JZLorg/webrtc/VideoFrame;I)Z");
@@ -956,7 +956,7 @@ bool MediaCodecVideoEncoder::EncodeTexture(JNIEnv* jni,
   jfloatArray sampling_matrix = handle.sampling_matrix.ToJava(jni);
   bool encode_status = jni->CallBooleanMethod(
       *j_media_codec_video_encoder_, j_encode_texture_method_, key_frame,
-      handle.oes_texture_id, sampling_matrix, current_timestamp_us_);
+      handle.oes_texture_id, sampling_matrix, current_timestamp_us_, handle.rgbTexture);
   if (CheckException(jni)) {
     ALOGE << "Exception in encode texture.";
     ProcessHWError(true /* reset_if_fallback_unavailable */);
