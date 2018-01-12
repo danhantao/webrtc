@@ -59,7 +59,7 @@ enum { kMaxWarningLogFrames = 2 };
 class MediaCodecVideoDecoder : public VideoDecoder, public rtc::MessageHandler {
  public:
   explicit MediaCodecVideoDecoder(
-      JNIEnv* jni, VideoCodecType codecType, jobject render_egl_context);
+      JNIEnv* jni, VideoCodecType codecType, jobject render_egl_context,jboolean isMTK);
   virtual ~MediaCodecVideoDecoder();
 
   int32_t InitDecode(const VideoCodec* codecSettings, int32_t numberOfCores)
@@ -171,7 +171,7 @@ class MediaCodecVideoDecoder : public VideoDecoder, public rtc::MessageHandler {
 
 MediaCodecVideoDecoder::MediaCodecVideoDecoder(JNIEnv* jni,
                                                VideoCodecType codecType,
-                                               jobject render_egl_context)
+                                               jobject render_egl_context,jboolean isMTK)
     : codecType_(codecType),
       render_egl_context_(render_egl_context),
       key_frame_required_(true),
@@ -265,7 +265,7 @@ MediaCodecVideoDecoder::MediaCodecVideoDecoder(JNIEnv* jni,
       jni, j_decoded_output_buffer_class, "decodeTimeMs", "J");
 
   CHECK_EXCEPTION(jni) << "MediaCodecVideoDecoder ctor failed";
-  use_surface_ = (render_egl_context_ != NULL);
+  use_surface_ = (render_egl_context_ != NULL) && !isMTK;
   ALOGD << "MediaCodecVideoDecoder ctor. Use surface: " << use_surface_;
   memset(&codec_, 0, sizeof(codec_));
   AllowBlockingCalls();
@@ -1004,7 +1004,7 @@ VideoDecoder* MediaCodecVideoDecoderFactory::CreateVideoDecoder(
       ALOGD << "Create HW video decoder for type " << (int)type;
       JNIEnv* jni = AttachCurrentThreadIfNeeded();
       ScopedLocalRefFrame local_ref_frame(jni);
-      return new MediaCodecVideoDecoder(jni, type, egl_context_);
+      return new MediaCodecVideoDecoder(jni, type, egl_context_, isMTK);
     }
   }
   ALOGW << "Can not find HW video decoder for type " << (int)type;

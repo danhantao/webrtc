@@ -107,7 +107,8 @@ JNI_FUNCTION_DECLARATION(
     jclass,
     jlong native_factory,
     jobject local_egl_context,
-    jobject remote_egl_context) {
+    jobject remote_egl_context,
+    jboolean isMTK) {
   OwnedFactoryAndThreads* owned_factory =
       reinterpret_cast<OwnedFactoryAndThreads*>(native_factory);
 
@@ -129,6 +130,7 @@ JNI_FUNCTION_DECLARATION(
   if (use_media_codec_decoder_factory && decoder_factory) {
     LOG(LS_INFO) << "Set EGL context for HW decoding.";
     decoder_factory->SetEGLContext(jni, remote_egl_context);
+    decoder_factory->isMTK = isMTK;
   }
 }
 
