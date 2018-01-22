@@ -251,17 +251,12 @@ int AndroidTextureBuffer::height() const {
 }
 
     jobject AndroidTextureBuffer::createJavaTextureBuffer(JNIEnv* jni){
+        jmethodID method_id = jni->GetMethodID(jni->FindClass("org/webrtc/SurfaceTextureHelper"),
+        "createTextureBuffer","(III[FZ)Lorg/webrtc/TextureBufferImpl;");
 
-        jmethodID createTextureBuffer_mid = GetMethodID(
-                jni,
-                GetObjectClass(jni, surface_texture_helper_),
-                "createTextureBuffer",
-                "(III[FZ)Lorg/webrtc/TextureBufferImpl;");
-
-      jfloatArray sampling_matrix = native_handle_.sampling_matrix.ToJava(jni);
-      jobject javaTextureBuffer = jni->CallObjectMethod(surface_texture_helper_,
-                          createTextureBuffer_mid,
-                          native_handle_.oes_texture_id, width(), height(), sampling_matrix,
+      jobject javaTextureBuffer = jni->CallObjectMethod(surface_texture_helper_.get()->GetJavaSurfaceTextureHelper().obj(),
+                                                        method_id,
+                          native_handle_.oes_texture_id, width(), height(), native_handle_.sampling_matrix.ToJava(jni).obj(),
                           native_handle_.rgbTexture);
       return javaTextureBuffer;
     }
@@ -417,8 +412,10 @@ ScopedJavaLocalRef<jobject> NativeToJavaFrame(JNIEnv* jni,
           if(android_buffer->android_type() == AndroidVideoFrameBuffer::AndroidType::kTextureBuffer) {
               AndroidTextureBuffer* texture_buffer = static_cast<AndroidTextureBuffer*>(buffer.get());
               jobject javaTextureBuffer = texture_buffer->createJavaTextureBuffer(jni);
+//              base::android::ScopedJavaLocalRef<jobject>
+//              new rtc::RefCountedObject<AndroidVideoBuffer>(jni,javaTextureBuffer);
               return Java_VideoFrame_Constructor(
-                jni, javaTextureBuffer,
+                jni, base::android::ScopedJavaLocalRef<jobject>(jni,javaTextureBuffer),
                 static_cast<jint>(frame.rotation()),
                 static_cast<jlong>(frame.timestamp_us() *
                            rtc::kNumNanosecsPerMicrosec));

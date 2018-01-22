@@ -603,7 +603,7 @@ public class MediaCodecVideoEncoder {
   }
 
   @CalledByNativeUnchecked
-  boolean encodeTexturePara(boolean isKeyframe, int oesTextureId, float[] transformationMatrix,
+  boolean encodeTexture(boolean isKeyframe, int oesTextureId, float[] transformationMatrix,
                         long presentationTimestampUs, boolean rgbTexture) {
     checkOnMediaCodecThread();
     try {
