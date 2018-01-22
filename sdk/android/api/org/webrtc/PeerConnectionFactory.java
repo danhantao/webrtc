@@ -324,7 +324,7 @@ public class PeerConnectionFactory {
     localEglbase = EglBase.create(localEglContext);
     remoteEglbase = EglBase.create(remoteEglContext);
     nativeSetVideoHwAccelerationOptions(
-        nativeFactory, localEglbase.getEglBaseContext(), remoteEglbase.getEglBaseContext());
+        nativeFactory, localEglbase.getEglBaseContext(), remoteEglbase.getEglBaseContext(),false);
   }
 
   public void dispose() {
@@ -417,7 +417,7 @@ public class PeerConnectionFactory {
   private static native void nativeStopAecDump(long factory);
   @Deprecated public native void nativeSetOptions(long factory, Options options);
   private static native void nativeSetVideoHwAccelerationOptions(
-      long factory, Object localEGLContext, Object remoteEGLContext);
+      long factory, Object localEGLContext, Object remoteEGLContext, boolean isMTK);
   private static native void nativeInvokeThreadsCallbacks(long factory);
   private static native void nativeFreeFactory(long factory);
   private static native long nativeGetNativePeerConnectionFactory(long factory);

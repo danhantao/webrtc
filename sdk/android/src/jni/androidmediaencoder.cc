@@ -878,7 +878,7 @@ bool MediaCodecVideoEncoder::EncodeTexture(JNIEnv* jni,
       static_cast<AndroidTextureBuffer*>(frame.video_frame_buffer().get())
           ->native_handle_impl();
 
-  bool encode_status = Java_MediaCodecVideoEncoder_encodeTexture(
+  bool encode_status = Java_MediaCodecVideoEncoder_encodeTexturePara(
       jni, j_media_codec_video_encoder_, key_frame, handle.oes_texture_id,
       handle.sampling_matrix.ToJava(jni), current_timestamp_us_,handle.rgbTexture);
   if (CheckException(jni)) {

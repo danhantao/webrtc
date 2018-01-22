@@ -41,7 +41,7 @@ class AndroidVideoTrackSourceObserver implements VideoCapturer.CapturerObserver 
   public void onTextureFrameCaptured(int width, int height, int oesTextureId,
       float[] transformMatrix, int rotation, long timestamp) {
     nativeOnTextureFrameCaptured(
-        nativeSource, width, height, oesTextureId, transformMatrix, rotation, timestamp);
+        nativeSource, width, height, oesTextureId, transformMatrix, rotation, timestamp, false);
   }
 
   @Override
@@ -55,7 +55,7 @@ class AndroidVideoTrackSourceObserver implements VideoCapturer.CapturerObserver 
   private static native void nativeOnByteBufferFrameCaptured(
       long source, byte[] data, int length, int width, int height, int rotation, long timeStamp);
   private static native void nativeOnTextureFrameCaptured(long source, int width, int height,
-      int oesTextureId, float[] transformMatrix, int rotation, long timestamp);
+      int oesTextureId, float[] transformMatrix, int rotation, long timestamp, boolean rgbTexture);
   private static native void nativeOnFrameCaptured(
       long source, int width, int height, int rotation, long timestampNs, VideoFrame.Buffer frame);
 }

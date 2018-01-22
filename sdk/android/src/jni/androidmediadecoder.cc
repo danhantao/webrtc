@@ -59,7 +59,7 @@ enum { kMaxWarningLogFrames = 2 };
 class MediaCodecVideoDecoder : public VideoDecoder, public rtc::MessageHandler {
  public:
   explicit MediaCodecVideoDecoder(
-      JNIEnv* jni, VideoCodecType codecType, jobject render_egl_context);
+      JNIEnv* jni, VideoCodecType codecType, jobject render_egl_context, jboolean isMTK);
   virtual ~MediaCodecVideoDecoder();
 
   int32_t InitDecode(const VideoCodec* codecSettings, int32_t numberOfCores)
@@ -858,7 +858,7 @@ VideoDecoder* MediaCodecVideoDecoderFactory::CreateVideoDecoder(
       ALOGD << "Create HW video decoder for type " << static_cast<int>(type);
       JNIEnv* jni = AttachCurrentThreadIfNeeded();
       ScopedLocalRefFrame local_ref_frame(jni);
-      return new MediaCodecVideoDecoder(jni, type, egl_context_);
+      return new MediaCodecVideoDecoder(jni, type, egl_context_,isMTK);
     }
   }
   ALOGW << "Can not find HW video decoder for type " << static_cast<int>(type);

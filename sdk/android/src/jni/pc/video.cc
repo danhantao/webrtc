@@ -59,13 +59,14 @@ void SetEglContext(JNIEnv* env,
 
 void SetEglContext(JNIEnv* env,
                    cricket::WebRtcVideoDecoderFactory* decoder_factory,
-                   const JavaRef<jobject>& egl_context) {
+                   const JavaRef<jobject>& egl_context,jboolean isMTK) {
   if (decoder_factory) {
     MediaCodecVideoDecoderFactory* media_codec_factory =
         static_cast<MediaCodecVideoDecoderFactory*>(decoder_factory);
     if (media_codec_factory) {
       RTC_LOG(LS_INFO) << "Set EGL context for HW decoding.";
       media_codec_factory->SetEGLContext(env, egl_context.obj());
+      media_codec_factory->isMTK = isMTK;
     }
   }
 }

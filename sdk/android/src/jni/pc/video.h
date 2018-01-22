@@ -45,7 +45,7 @@ void SetEglContext(JNIEnv* env,
                    const JavaRef<jobject>& egl_context);
 void SetEglContext(JNIEnv* env,
                    cricket::WebRtcVideoDecoderFactory* decoder_factory,
-                   const JavaRef<jobject>& egl_context);
+                   const JavaRef<jobject>& egl_context,jboolean isMTK);
 
 void* CreateVideoSource(JNIEnv* env,
                         rtc::Thread* signaling_thread,
