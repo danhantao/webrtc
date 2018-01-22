@@ -23,6 +23,7 @@ namespace jni {
 class MediaCodecVideoDecoderFactory
     : public cricket::WebRtcVideoDecoderFactory {
  public:
+  jboolean isMTK = JNI_FALSE;
   MediaCodecVideoDecoderFactory();
   virtual ~MediaCodecVideoDecoderFactory();
 

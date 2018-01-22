@@ -481,12 +481,17 @@ static void JNI_PeerConnectionFactory_SetVideoHwAccelerationOptions(
     const JavaParamRef<jclass>&,
     jlong native_factory,
     const JavaParamRef<jobject>& local_egl_context,
-    const JavaParamRef<jobject>& remote_egl_context) {
+    const JavaParamRef<jobject>& remote_egl_context,
+    jboolean isMTK) {
   OwnedFactoryAndThreads* owned_factory =
       reinterpret_cast<OwnedFactoryAndThreads*>(native_factory);
   SetEglContext(jni, owned_factory->legacy_encoder_factory(),
                 local_egl_context);
-  SetEglContext(jni, owned_factory->legacy_decoder_factory(),
+  MediaCodecVideoDecoderFactory* decoder_factory =
+      static_cast<MediaCodecVideoDecoderFactory*>(
+          owned_factory->legacy_decoder_factory());
+  decoder_factory->isMTK = isMTK;
+  SetEglContext(jni, decoder_factory,
                 remote_egl_context);
 }
 

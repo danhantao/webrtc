@@ -138,7 +138,8 @@ class MediaCodecVideoDecoder : public VideoDecoder, public rtc::MessageHandler {
 
 MediaCodecVideoDecoder::MediaCodecVideoDecoder(JNIEnv* jni,
                                                VideoCodecType codecType,
-                                               jobject render_egl_context)
+                                               jobject render_egl_context,
+                                               jboolean isMTK)
     : codecType_(codecType),
       render_egl_context_(render_egl_context),
       key_frame_required_(true),
@@ -151,7 +152,7 @@ MediaCodecVideoDecoder::MediaCodecVideoDecoder(JNIEnv* jni,
   codec_thread_->SetName("MediaCodecVideoDecoder", NULL);
   RTC_CHECK(codec_thread_->Start()) << "Failed to start MediaCodecVideoDecoder";
 
-  use_surface_ = (render_egl_context_ != NULL);
+  use_surface_ = (render_egl_context_ != NULL) && !isMTK;
   ALOGD << "MediaCodecVideoDecoder ctor. Use surface: " << use_surface_;
   memset(&codec_, 0, sizeof(codec_));
   AllowBlockingCalls();
