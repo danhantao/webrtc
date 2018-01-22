@@ -55,12 +55,14 @@ class Matrix {
 struct NativeHandleImpl {
   NativeHandleImpl(JNIEnv* jni,
                    jint j_oes_texture_id,
-                   const JavaRef<jfloatArray>& j_transform_matrix);
+                   const JavaRef<jfloatArray>& j_transform_matrix,
+                   jboolean j_rgbTexture);
 
-  NativeHandleImpl(int id, const Matrix& matrix);
+  NativeHandleImpl(int id, const Matrix& matrix, const bool isRgb);
 
   const int oes_texture_id;
   Matrix sampling_matrix;
+  const bool rgbTexture;
 };
 
 // Base class to differentiate between the old texture frames and the new
@@ -84,6 +86,9 @@ class AndroidTextureBuffer : public AndroidVideoFrameBuffer {
   ~AndroidTextureBuffer();
 
   NativeHandleImpl native_handle_impl() const;
+
+  jobject createJavaTextureBuffer(JNIEnv* jni);
+
 
  private:
   Type type() const override;

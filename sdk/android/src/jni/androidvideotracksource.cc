@@ -162,7 +162,7 @@ void AndroidVideoTrackSource::OnTextureFrameCaptured(
 
   OnFrame(VideoFrame(surface_texture_helper_->CreateTextureFrame(
                          adapted_width, adapted_height,
-                         NativeHandleImpl(handle.oes_texture_id, matrix)),
+                         NativeHandleImpl(handle.oes_texture_id, matrix, handle.rgbTexture)),
                      rotation, translated_camera_time_us));
 }
 
@@ -240,12 +240,13 @@ static void JNI_AndroidVideoTrackSourceObserver_OnTextureFrameCaptured(
     jint j_oes_texture_id,
     const JavaParamRef<jfloatArray>& j_transform_matrix,
     jint j_rotation,
-    jlong j_timestamp) {
+    jlong j_timestamp,
+    jboolean j_rgbTexture) {
   AndroidVideoTrackSource* source =
       AndroidVideoTrackSourceFromJavaProxy(j_source);
   source->OnTextureFrameCaptured(
       j_width, j_height, jintToVideoRotation(j_rotation), j_timestamp,
-      NativeHandleImpl(jni, j_oes_texture_id, j_transform_matrix));
+      NativeHandleImpl(jni, j_oes_texture_id, j_transform_matrix, j_rgbTexture));
 }
 
 static void JNI_AndroidVideoTrackSourceObserver_OnFrameCaptured(
