@@ -880,7 +880,7 @@ bool MediaCodecVideoEncoder::EncodeTexture(JNIEnv* jni,
 
   bool encode_status = Java_MediaCodecVideoEncoder_encodeTexture(
       jni, j_media_codec_video_encoder_, key_frame, handle.oes_texture_id,
-      handle.sampling_matrix.ToJava(jni), current_timestamp_us_);
+      handle.sampling_matrix.ToJava(jni), current_timestamp_us_,handle.rgbTexture);
   if (CheckException(jni)) {
     ALOGE << "Exception in encode texture.";
     ProcessHWError(true /* reset_if_fallback_unavailable */);
